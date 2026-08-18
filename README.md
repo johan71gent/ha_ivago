@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo@2x.png" alt="IVAGO Afvalkalender" width="640"></p>
+
 # IVAGO Afvalkalender – Home Assistant integratie
 
 Custom integration die de **ophaalkalender van IVAGO** (Gent & Destelbergen) in Home Assistant brengt:
@@ -91,6 +93,14 @@ entities:
 3. Straten opzoeken: `GET https://www.ivago.be/nl/particulier/autocomplete/garbage/streets?q=Kortrijkse`.
 
 Vervalt de sessie, dan wordt het adres automatisch opnieuw ingediend.
+
+## Icoon / logo
+`assets/` bevat een eigen ontwerp (SVG-bron + PNG's in de maten van het
+[home-assistant/brands](https://github.com/home-assistant/brands)-repo: `icon.png` 256², `icon@2x.png` 512²,
+`logo.png` 512×128, `logo@2x.png` 1024×256). Het is **geen** IVAGO-logo en niet met IVAGO verbonden; vrij te gebruiken (CC0).
+
+Home Assistant en HACS tonen iconen van custom integraties enkel via de brands-repo. Wil je het icoon in de HA-interface zien,
+open dan een PR op home-assistant/brands die de vier PNG's toevoegt onder `custom_integrations/ivago/`.
 
 ## Disclaimer
 Niet-officiële integratie, niet verbonden met IVAGO. Als IVAGO zijn website wijzigt kan de integratie stoppen met werken.
