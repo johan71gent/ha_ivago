@@ -1,82 +1,85 @@
 <p align="center"><img src="assets/logo@2x.png" alt="IVAGO Afvalkalender" width="640"></p>
 
-# IVAGO Afvalkalender – Home Assistant integratie
+# IVAGO Afvalkalender – Home Assistant integration
 
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%98%95-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/johan71gent)
 
-Custom integration die de **ophaalkalender van IVAGO** (Gent & Destelbergen) in Home Assistant brengt:
-welk type huisvuil wordt vandaag/morgen/volgende keer opgehaald, en een kalender-entiteit met alle ophalingen.
+Custom integration that brings the **IVAGO waste collection calendar** (Ghent & Destelbergen, Belgium) into Home Assistant:
+which type of household waste is collected today / tomorrow / next, plus a calendar entity with all pickups.
 
-Gebruikt dezelfde (onofficiële) endpoints als de kalender op
+It uses the same (unofficial) endpoints as the calendar on
 [ivago.be/nl/particulier/afval/ophaling](https://www.ivago.be/nl/particulier/afval/ophaling).
-Geen account of API-key nodig, enkel je straat en huisnummer.
+No account or API key needed — just your street and house number.
 
-## Installatie
+## Installation
 
 ### Via HACS (custom repository)
-1. HACS → Integraties → ⋮ → *Custom repositories*
-2. `https://github.com/johan71gent/ha_ivago` toevoegen, categorie **Integration**
-3. "IVAGO Afvalkalender" installeren en Home Assistant herstarten
+1. HACS → Integrations → ⋮ → *Custom repositories*
+2. Add `https://github.com/johan71gent/ha_ivago`, category **Integration**
+3. Install "IVAGO Afvalkalender" and restart Home Assistant
 
-### Manueel
-Kopieer de map `custom_components/ivago` naar `<config>/custom_components/ivago` en herstart Home Assistant.
+### Manual
+Copy the folder `custom_components/ivago` to `<config>/custom_components/ivago` and restart Home Assistant.
 
-## Configuratie
-*Instellingen → Apparaten & diensten → Integratie toevoegen → "IVAGO Afvalkalender"*
+## Configuration
+*Settings → Devices & services → Add integration → "IVAGO Afvalkalender"*
 
-- **Straat**: begin van de straatnaam volstaat (bv. `Kortrijkse`). Bij meerdere treffers krijg je een keuzelijst
-  (bv. `Kortrijksesteenweg (GENT)` vs `Kortrijksesteenweg (SINT-DENIJS-WESTREM)`).
-- **Huisnummer**: bv. `12` of `12A`.
+- **Street**: the beginning of the street name is enough (e.g. `Kortrijkse`). If several streets match you get a dropdown
+  (e.g. `Kortrijksesteenweg (GENT)` vs `Kortrijksesteenweg (SINT-DENIJS-WESTREM)`).
+- **House number**: e.g. `12` or `12A`.
 
-Het adres wordt gevalideerd bij IVAGO. Je kan meerdere adressen toevoegen (elk krijgt een eigen apparaat).
+The address is validated against IVAGO. You can add multiple addresses (each gets its own device).
 
-### Achteraf aanpassen
-- **Adres wijzigen**: op de integratie → ⋮ → *Opnieuw configureren*. De entiteiten blijven bestaan (entity-id's veranderen niet, de naam van het apparaat wel).
-- **Opties** (knop *Configureren*): updatefrequentie in uren (standaard 12), hoeveel dagen vooruit er wordt opgehaald (standaard 90). Wijzigingen worden meteen toegepast.
+### Changing things later
+- **Change address**: on the integration → ⋮ → *Reconfigure*. Entities are kept (entity IDs don't change, the device name does).
+- **Options** (*Configure* button): update interval in hours (default 12) and how many days ahead to fetch (default 90). Changes apply immediately.
 
-## Entiteiten
-Per adres wordt één apparaat aangemaakt met:
+## Entities
+One device is created per address, with:
 
-| Entiteit | State | Attributen |
+| Entity | State | Attributes |
 |---|---|---|
-| `sensor.…_volgende_ophaling` | `Vandaag: PMD, Restafval` / `Morgen: GFT` / `Over 6 dagen: GFT, PMD, Restafval` / `Geen ophaling gepland` | `date`, `weekday`, `days_until`, `waste_types` (bv. `["PMD","RESTAFVAL"]`), `waste_types_names`, `waste_types_text` (bv. `PMD, Restafval`) |
-| `sensor.…_volgende_ophaaldatum` | datum van de eerstvolgende ophaaldag (device_class `date`) | idem |
-| `sensor.…_dagen_tot_volgende_ophaling` | aantal dagen (0 = vandaag) | |
-| `sensor.…_ophaling_vandaag` | `PMD, Restafval` of `Geen` | `date`, `waste_types`, `has_pickup` |
-| `sensor.…_ophaling_morgen` | idem voor morgen | idem |
-| `sensor.…_restafval`, `…_pmd`, `…_gft`, `…_papier_en_karton`, `…_glas`, `…_grofvuil`, `…_kerstbomen` | volgende datum per afvalsoort | `days_until`, `is_today`, `is_tomorrow`, `upcoming` (volgende 5 data) |
-| `calendar.…_ophaalkalender` | kalender met alle ophalingen (hele-dag events) | |
+| `sensor.…_next_pickup` | `Vandaag: PMD, Restafval` / `Morgen: GFT` / `Over 6 dagen: GFT, PMD, Restafval` / `Geen ophaling gepland` | `date`, `weekday`, `days_until`, `waste_types` (e.g. `["PMD","RESTAFVAL"]`), `waste_types_names`, `waste_types_text` (e.g. `PMD, Restafval`) |
+| `sensor.…_next_pickup_date` | date of the next collection day (device_class `date`) | same as above |
+| `sensor.…_days_until_next_pickup` | number of days (0 = today) | |
+| `sensor.…_pickup_today` | `PMD, Restafval` or `Geen` | `date`, `waste_types`, `has_pickup` |
+| `sensor.…_pickup_tomorrow` | same, for tomorrow | same |
+| `sensor.…_restafval`, `…_pmd`, `…_gft`, `…_papier_en_karton`, `…_glas`, `…_grofvuil`, `…_kerstbomen` | next date per waste type | `days_until`, `is_today`, `is_tomorrow`, `upcoming` (next 5 dates) |
+| `calendar.…_pickup_calendar` | calendar with all pickups (all-day events) | |
 
-De data wordt standaard elke 12 uur opgehaald (90 dagen vooruit, beide instelbaar via *Configureren*) en de "vandaag/morgen"-sensoren worden net na middernacht herberekend.
+Notes:
+- Entity IDs follow your Home Assistant language: with Dutch UI you get e.g. `sensor.…_volgende_ophaling`, `…_ophaling_vandaag`, `…_ophaalkalender`.
+- The text states (`Vandaag: …`, `Morgen: …`, `Over N dagen: …`, `Geen`) are in Dutch, matching the IVAGO service area. Use the attributes (`waste_types`, `days_until`, `has_pickup`) in templates and automations if you prefer language-independent values.
+- Data is fetched every 12 hours (90 days ahead; both configurable) and the today/tomorrow sensors are recalculated right after midnight.
 
-## Voorbeelden
+## Examples
 
-**Melding de avond voordien**
+**Notification the evening before**
 ```yaml
 automation:
-  - alias: IVAGO herinnering
+  - alias: IVAGO reminder
     trigger:
       - platform: time
         at: "19:00:00"
     condition:
       - condition: state
-        entity_id: sensor.ivago_kortrijksesteenweg_gent_10_ophaling_morgen
+        entity_id: sensor.ivago_kortrijksesteenweg_gent_10_pickup_tomorrow
         attribute: has_pickup
         state: true
     action:
-      - service: notify.mobile_app_telefoon
+      - service: notify.mobile_app_phone
         data:
-          title: "Afval buitenzetten"
-          message: "Morgen: {{ states('sensor.ivago_kortrijksesteenweg_gent_10_ophaling_morgen') }}"
+          title: "Put out the bins"
+          message: "Tomorrow: {{ states('sensor.ivago_kortrijksesteenweg_gent_10_pickup_tomorrow') }}"
 ```
 
-**Dashboardkaart**
+**Dashboard card**
 ```yaml
 type: entities
 title: IVAGO
 entities:
-  - sensor.ivago_kortrijksesteenweg_gent_10_volgende_ophaling
-  - sensor.ivago_kortrijksesteenweg_gent_10_dagen_tot_volgende_ophaling
+  - sensor.ivago_kortrijksesteenweg_gent_10_next_pickup
+  - sensor.ivago_kortrijksesteenweg_gent_10_days_until_next_pickup
   - sensor.ivago_kortrijksesteenweg_gent_10_restafval
   - sensor.ivago_kortrijksesteenweg_gent_10_pmd
   - sensor.ivago_kortrijksesteenweg_gent_10_gft
@@ -84,19 +87,10 @@ entities:
   - sensor.ivago_kortrijksesteenweg_gent_10_glas
 ```
 
-## Hoe het werkt (API)
-1. `POST https://www.ivago.be/nl/particulier/afval/ophaling` met `ivago_loc=<Straat (GEMEENTE)>`, `number=<nr>`,
-   `form_id=garbage_address_form`, `op=Bekijk` → 303 + sessiecookie (adres zit in de server-side sessie; 200 = adres geweigerd).
-2. `GET https://www.ivago.be/nl/particulier/garbage/pick-up/pickups?_format=json&type=&start=<unix>&end=<unix>` met die cookie →
-   `[{"date":"2026-08-24","label":"PMD","classes":"PMD ivago-pmd","url":"/nl/particulier/afval/gids/pmd"}, …]`
-3. Straten opzoeken: `GET https://www.ivago.be/nl/particulier/autocomplete/garbage/streets?q=Kortrijkse`.
-
-Vervalt de sessie, dan wordt het adres automatisch opnieuw ingediend.
-
-## Steun dit project
-Vind je deze integratie handig? Een koffie wordt gewaardeerd en houdt het onderhoud gaande:
+## Support this project
+Find this integration useful? A coffee is much appreciated and keeps maintenance going:
 
 <a href="https://buymeacoffee.com/johan71gent"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%98%95-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
 
 ## Disclaimer
-Niet-officiële integratie, niet verbonden met IVAGO. Als IVAGO zijn website wijzigt kan de integratie stoppen met werken.
+Unofficial integration, not affiliated with IVAGO. If IVAGO changes its website, the integration may stop working.
