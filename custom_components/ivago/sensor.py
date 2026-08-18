@@ -7,10 +7,11 @@ from typing import Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import Pickup
-from .const import DEFAULT_ICON, WASTE_TYPES
+from .const import DEFAULT_ICON, DOMAIN, WASTE_TYPES, WEEKDAYS_NL
 from .coordinator import IvagoConfigEntry, IvagoCoordinator, IvagoData
 from .entity import IvagoEntity
 
@@ -41,12 +42,20 @@ async def async_setup_entry(
     """Set up IVAGO sensors."""
     coordinator = entry.runtime_data
 
+    # Clean up entities from older versions.
+    ent_reg = er.async_get(hass)
+    for old_key in ("upcoming",):
+        if entity_id := ent_reg.async_get_entity_id(
+            "sensor", DOMAIN, f"{entry.entry_id}_{old_key}"
+        ):
+            ent_reg.async_remove(entity_id)
+
     entities: list[SensorEntity] = [
         IvagoNextPickupSensor(coordinator),
+        IvagoNextPickupDateSensor(coordinator),
         IvagoDaysUntilSensor(coordinator),
         IvagoDaySensor(coordinator, "today", 0),
         IvagoDaySensor(coordinator, "tomorrow", 1),
-        IvagoUpcomingSensor(coordinator),
     ]
 
     known: set[str] = set()
@@ -107,16 +116,67 @@ class IvagoWasteTypeSensor(IvagoEntity, SensorEntity):
         }
 
 
-class IvagoNextPickupSensor(IvagoEntity, SensorEntity):
-    """Date of the next collection day, with the waste types as attributes."""
+def _next_pickup_attributes(data: IvagoData) -> dict[str, Any]:
+    """Shared attributes describing the next collection day."""
+    today = data.today()
+    pickups = data.next_pickups()
+    names = _names(pickups)
+    nxt = pickups[0].date if pickups else None
+    return {
+        "date": nxt.isoformat() if nxt else None,
+        "weekday": WEEKDAYS_NL[nxt.weekday()] if nxt else None,
+        "days_until": (nxt - today).days if nxt else None,
+        "waste_types": [p.waste_type for p in pickups],
+        "waste_types_names": names,
+        "waste_types_text": ", ".join(names) if names else None,
+    }
 
-    _attr_device_class = SensorDeviceClass.DATE
+
+class IvagoNextPickupSensor(IvagoEntity, SensorEntity):
+    """Text: when is the next collection and what is collected.
+
+    State: ``Vandaag: PMD, Restafval`` / ``Morgen: GFT`` /
+    ``Over 6 dagen: GFT, PMD, Restafval`` / ``Geen ophaling gepland``.
+    """
+
     _attr_translation_key = "next_pickup"
     _attr_icon = "mdi:truck-fast"
 
     def __init__(self, coordinator: IvagoCoordinator) -> None:
         """Initialise."""
         super().__init__(coordinator, "next_pickup")
+
+    @property
+    def native_value(self) -> str:
+        """Human readable summary."""
+        data = self.coordinator.data
+        pickups = data.next_pickups()
+        if not pickups:
+            return "Geen ophaling gepland"
+        days = (pickups[0].date - data.today()).days
+        types = ", ".join(_names(pickups))
+        if days == 0:
+            return f"Vandaag: {types}"
+        if days == 1:
+            return f"Morgen: {types}"
+        return f"Over {days} dagen: {types}"
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Extra attributes."""
+        return _next_pickup_attributes(self.coordinator.data)
+
+
+class IvagoNextPickupDateSensor(IvagoEntity, SensorEntity):
+    """Date of the next collection day, with the waste types as attributes."""
+
+    _attr_device_class = SensorDeviceClass.DATE
+    _attr_translation_key = "next_pickup_date"
+    _attr_icon = "mdi:calendar-arrow-right"
+
+    def __init__(self, coordinator: IvagoCoordinator) -> None:
+        """Initialise."""
+        super().__init__(coordinator, "next_pickup_date")
 
     @property
     def native_value(self) -> date | None:
@@ -127,16 +187,7 @@ class IvagoNextPickupSensor(IvagoEntity, SensorEntity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Extra attributes."""
-        data = self.coordinator.data
-        today = data.today()
-        pickups = data.next_pickups()
-        names = _names(pickups)
-        return {
-            "waste_types": [p.waste_type for p in pickups],
-            "waste_types_names": names,
-            "waste_types_text": ", ".join(names) if names else None,
-            "days_until": (pickups[0].date - today).days if pickups else None,
-        }
+        return _next_pickup_attributes(self.coordinator.data)
 
 
 class IvagoDaysUntilSensor(IvagoEntity, SensorEntity):
@@ -192,61 +243,3 @@ class IvagoDaySensor(IvagoEntity, SensorEntity):
             "has_pickup": bool(pickups),
         }
 
-
-class IvagoUpcomingSensor(IvagoEntity, SensorEntity):
-    """Text: which waste types are collected within the next N days.
-
-    State e.g. ``Binnen 3 dagen: GFT, PMD`` or ``Geen ophaling binnen 3 dagen``.
-    N is configurable in the integration options (default 3). "Within N days"
-    means today up to and including today + N.
-    """
-
-    _attr_translation_key = "upcoming"
-    _attr_icon = "mdi:calendar-alert"
-
-    def __init__(self, coordinator: IvagoCoordinator) -> None:
-        """Initialise."""
-        super().__init__(coordinator, "upcoming")
-
-    def _pickups(self) -> list[Pickup]:
-        return self.coordinator.data.pickups_within(self.coordinator.upcoming_days)
-
-    def _unique_types(self) -> list[str]:
-        """Waste types in the window, ordered by first pickup date, no duplicates."""
-        seen: list[str] = []
-        for p in self._pickups():
-            if p.waste_type not in seen:
-                seen.append(p.waste_type)
-        return seen
-
-    @property
-    def native_value(self) -> str:
-        """Human readable summary."""
-        days = self.coordinator.upcoming_days
-        types = self._unique_types()
-        if not types:
-            return f"Geen ophaling binnen {days} dagen"
-        return f"Binnen {days} dagen: " + ", ".join(waste_type_name(t) for t in types)
-
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Extra attributes."""
-        today = self.coordinator.data.today()
-        pickups = self._pickups()
-        types = self._unique_types()
-        return {
-            "days": self.coordinator.upcoming_days,
-            "waste_types": types,
-            "waste_types_names": [waste_type_name(t) for t in types],
-            "waste_types_text": ", ".join(waste_type_name(t) for t in types) or None,
-            "has_pickup": bool(pickups),
-            "pickups": [
-                {
-                    "date": p.date.isoformat(),
-                    "days_until": (p.date - today).days,
-                    "waste_type": p.waste_type,
-                    "name": waste_type_name(p.waste_type),
-                }
-                for p in pickups
-            ],
-        }

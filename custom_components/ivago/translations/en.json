@@ -59,8 +59,8 @@
       "tomorrow": {
         "name": "Pickup tomorrow"
       },
-      "upcoming": {
-        "name": "Upcoming pickup"
+      "next_pickup_date": {
+        "name": "Next pickup date"
       }
     },
     "calendar": {
@@ -76,13 +76,11 @@
         "description": "How often the calendar is fetched and how far ahead.",
         "data": {
           "scan_interval_hours": "Update interval (hours)",
-          "lookahead_days": "Days to fetch ahead",
-          "upcoming_days": "'Upcoming' window (days)"
+          "lookahead_days": "Days to fetch ahead"
         },
         "data_description": {
           "scan_interval_hours": "Default 12 hours. The calendar rarely changes; more than a few times a day is pointless.",
-          "lookahead_days": "Default 90 days. Determines how far the calendar entity and 'upcoming' look ahead.",
-          "upcoming_days": "Default 3. Drives the 'Upcoming pickup' sensor: today up to and including today + N days."
+          "lookahead_days": "Default 90 days. Determines how far the calendar entity and 'upcoming' look ahead."
         }
       }
     }

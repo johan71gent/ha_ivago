@@ -15,10 +15,8 @@ from .api import IvagoApi, IvagoError, IvagoInvalidAddress, Pickup
 from .const import (
     CONF_LOOKAHEAD_DAYS,
     CONF_SCAN_INTERVAL_HOURS,
-    CONF_UPCOMING_DAYS,
     DEFAULT_LOOKAHEAD_DAYS,
     DEFAULT_SCAN_INTERVAL_HOURS,
-    DEFAULT_UPCOMING_DAYS,
     DOMAIN,
 )
 
@@ -54,12 +52,6 @@ class IvagoData:
                 return p
         return None
 
-    def pickups_within(self, days: int, from_day: date | None = None) -> list[Pickup]:
-        """Pickups from ``from_day`` up to and including ``from_day + days``."""
-        from_day = from_day or self.today()
-        until = from_day + timedelta(days=days)
-        return [p for p in self.pickups if from_day <= p.date <= until]
-
     def next_pickups(self, from_day: date | None = None) -> list[Pickup]:
         """All pickups on the next collection day (today or later)."""
         from_day = from_day or self.today()
@@ -90,9 +82,6 @@ class IvagoCoordinator(DataUpdateCoordinator[IvagoData]):
         self.api = api
         self.lookahead_days = int(
             entry.options.get(CONF_LOOKAHEAD_DAYS, DEFAULT_LOOKAHEAD_DAYS)
-        )
-        self.upcoming_days = int(
-            entry.options.get(CONF_UPCOMING_DAYS, DEFAULT_UPCOMING_DAYS)
         )
 
     async def _async_update_data(self) -> IvagoData:
