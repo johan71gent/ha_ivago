@@ -95,12 +95,13 @@ entities:
 Vervalt de sessie, dan wordt het adres automatisch opnieuw ingediend.
 
 ## Icoon / logo
-`assets/` bevat een eigen ontwerp (SVG-bron + PNG's in de maten van het
-[home-assistant/brands](https://github.com/home-assistant/brands)-repo: `icon.png` 256², `icon@2x.png` 512²,
-`logo.png` 512×128, `logo@2x.png` 1024×256). Het is **geen** IVAGO-logo en niet met IVAGO verbonden; vrij te gebruiken (CC0).
+Eigen ontwerp (**geen** IVAGO-logo, niet met IVAGO verbonden; vrij te gebruiken, CC0). De SVG-bron staat in `assets/`.
 
-Home Assistant en HACS tonen iconen van custom integraties enkel via de brands-repo. Wil je het icoon in de HA-interface zien,
-open dan een PR op home-assistant/brands die de vier PNG's toevoegt onder `custom_integrations/ivago/`.
+De PNG's zitten in `custom_components/ivago/brand/` (`icon.png` 256², `icon@2x.png` 512², `logo.png` 512×128,
+`logo@2x.png` 1024×256). Sinds **Home Assistant 2026.3** laadt HA die lokale afbeeldingen automatisch
+(via `/api/brands/integration/ivago/…`, met voorrang op de brands-CDN) — geen PR op home-assistant/brands meer nodig.
+Zie je na installatie nog het generieke icoon: herstart HA en ververs de browsercache (Ctrl+F5).
+Op oudere HA-versies (< 2026.3) blijft het generieke icoon zichtbaar.
 
 ## Disclaimer
 Niet-officiële integratie, niet verbonden met IVAGO. Als IVAGO zijn website wijzigt kan de integratie stoppen met werken.
