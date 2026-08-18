@@ -1,0 +1,85 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IVAGO address",
+        "description": "Enter your street and house number (as on ivago.be). Only addresses in the IVAGO area (Ghent and Destelbergen) are supported.",
+        "data": {
+          "street_query": "Street",
+          "number": "House number"
+        },
+        "data_description": {
+          "street_query": "The beginning of the street name is enough, e.g. 'Kortrijkse'.",
+          "number": "House number, optionally with box (e.g. 12 or 12A)."
+        }
+      },
+      "select_street": {
+        "title": "Select your street",
+        "description": "Multiple streets found for house number {number}. Pick the right one.",
+        "data": {
+          "street": "Street"
+        }
+      },
+      "reconfigure": {
+        "title": "Change IVAGO address",
+        "description": "Enter the new address. Entities are kept, the session is re-established.",
+        "data": {
+          "street_query": "Street",
+          "number": "House number"
+        },
+        "data_description": {
+          "street_query": "The beginning of the street name is enough, e.g. 'Kortrijkse'.",
+          "number": "House number, optionally with box (e.g. 12 or 12A)."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to ivago.be.",
+      "street_not_found": "Street not found. Use a street inside the IVAGO area.",
+      "invalid_address": "IVAGO does not accept this address.",
+      "no_data": "IVAGO returns no pickups for this address. Check the house number.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This address is already configured.",
+      "reconfigure_successful": "Address updated."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "next_pickup": {
+        "name": "Next pickup"
+      },
+      "days_until_next_pickup": {
+        "name": "Days until next pickup"
+      },
+      "today": {
+        "name": "Pickup today"
+      },
+      "tomorrow": {
+        "name": "Pickup tomorrow"
+      }
+    },
+    "calendar": {
+      "calendar": {
+        "name": "Pickup calendar"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "IVAGO options",
+        "description": "How often the calendar is fetched and how far ahead.",
+        "data": {
+          "scan_interval_hours": "Update interval (hours)",
+          "lookahead_days": "Days to fetch ahead"
+        },
+        "data_description": {
+          "scan_interval_hours": "Default 12 hours. The calendar rarely changes; more than a few times a day is pointless.",
+          "lookahead_days": "Default 90 days. Determines how far the calendar entity and 'upcoming' look ahead."
+        }
+      }
+    }
+  }
+}

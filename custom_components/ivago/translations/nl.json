@@ -1,0 +1,85 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "IVAGO adres",
+        "description": "Geef je straat en huisnummer in (zoals op ivago.be). Alleen adressen in het IVAGO-werkingsgebied (Gent en Destelbergen) worden ondersteund.",
+        "data": {
+          "street_query": "Straat",
+          "number": "Huisnummer"
+        },
+        "data_description": {
+          "street_query": "Begin van de straatnaam volstaat, bv. 'Kortrijkse'.",
+          "number": "Huisnummer, eventueel met bus (bv. 12 of 12A)."
+        }
+      },
+      "select_street": {
+        "title": "Kies je straat",
+        "description": "Meerdere straten gevonden voor huisnummer {number}. Kies de juiste.",
+        "data": {
+          "street": "Straat"
+        }
+      },
+      "reconfigure": {
+        "title": "IVAGO adres wijzigen",
+        "description": "Geef het nieuwe adres in. De entiteiten blijven bestaan, de sessie wordt opnieuw opgezet.",
+        "data": {
+          "street_query": "Straat",
+          "number": "Huisnummer"
+        },
+        "data_description": {
+          "street_query": "Begin van de straatnaam volstaat, bv. 'Kortrijkse'.",
+          "number": "Huisnummer, eventueel met bus (bv. 12 of 12A)."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken met ivago.be.",
+      "street_not_found": "Straat niet gevonden. Gebruik een straat uit het IVAGO-werkingsgebied.",
+      "invalid_address": "IVAGO aanvaardt dit adres niet.",
+      "no_data": "IVAGO geeft geen ophalingen voor dit adres. Controleer het huisnummer.",
+      "unknown": "Onverwachte fout."
+    },
+    "abort": {
+      "already_configured": "Dit adres is al geconfigureerd.",
+      "reconfigure_successful": "Adres bijgewerkt."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "next_pickup": {
+        "name": "Volgende ophaling"
+      },
+      "days_until_next_pickup": {
+        "name": "Dagen tot volgende ophaling"
+      },
+      "today": {
+        "name": "Ophaling vandaag"
+      },
+      "tomorrow": {
+        "name": "Ophaling morgen"
+      }
+    },
+    "calendar": {
+      "calendar": {
+        "name": "Ophaalkalender"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "IVAGO opties",
+        "description": "Hoe vaak de kalender wordt opgehaald en hoe ver vooruit.",
+        "data": {
+          "scan_interval_hours": "Updatefrequentie (uren)",
+          "lookahead_days": "Dagen vooruit ophalen"
+        },
+        "data_description": {
+          "scan_interval_hours": "Standaard 12 uur. De kalender verandert zelden; vaker dan enkele keren per dag heeft geen zin.",
+          "lookahead_days": "Standaard 90 dagen. Bepaalt hoe ver de kalender-entiteit en 'upcoming' vooruit kijken."
+        }
+      }
+    }
+  }
+}

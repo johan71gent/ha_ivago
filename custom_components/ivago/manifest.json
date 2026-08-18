@@ -1,0 +1,13 @@
+{
+  "domain": "ivago",
+  "name": "IVAGO Afvalkalender",
+  "codeowners": ["@johan"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/johan/ha_ivago",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/johan/ha_ivago/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}
