@@ -47,8 +47,10 @@ from .const import (
     CONF_SCAN_INTERVAL_HOURS,
     CONF_STREET,
     CONF_STREET_QUERY,
+    CONF_UPCOMING_DAYS,
     DEFAULT_LOOKAHEAD_DAYS,
     DEFAULT_SCAN_INTERVAL_HOURS,
+    DEFAULT_UPCOMING_DAYS,
     DOMAIN,
 )
 
@@ -257,6 +259,7 @@ class IvagoOptionsFlow(OptionsFlow):
                 data={
                     CONF_SCAN_INTERVAL_HOURS: int(user_input[CONF_SCAN_INTERVAL_HOURS]),
                     CONF_LOOKAHEAD_DAYS: int(user_input[CONF_LOOKAHEAD_DAYS]),
+                    CONF_UPCOMING_DAYS: int(user_input[CONF_UPCOMING_DAYS]),
                 }
             )
 
@@ -280,6 +283,15 @@ class IvagoOptionsFlow(OptionsFlow):
                 ): NumberSelector(
                     NumberSelectorConfig(
                         min=14, max=365, step=1, mode=NumberSelectorMode.BOX,
+                        unit_of_measurement="d",
+                    )
+                ),
+                vol.Required(
+                    CONF_UPCOMING_DAYS,
+                    default=options.get(CONF_UPCOMING_DAYS, DEFAULT_UPCOMING_DAYS),
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=1, max=14, step=1, mode=NumberSelectorMode.BOX,
                         unit_of_measurement="d",
                     )
                 ),

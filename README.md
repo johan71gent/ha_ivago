@@ -28,7 +28,7 @@ Het adres wordt gevalideerd bij IVAGO. Je kan meerdere adressen toevoegen (elk k
 
 ### Achteraf aanpassen
 - **Adres wijzigen**: op de integratie → ⋮ → *Opnieuw configureren*. De entiteiten blijven bestaan (entity-id's veranderen niet, de naam van het apparaat wel).
-- **Opties** (knop *Configureren*): updatefrequentie in uren (standaard 12) en hoeveel dagen vooruit er wordt opgehaald (standaard 90). Wijzigingen worden meteen toegepast.
+- **Opties** (knop *Configureren*): updatefrequentie in uren (standaard 12), hoeveel dagen vooruit er wordt opgehaald (standaard 90) en het venster van de sensor *Ophaling binnenkort* (standaard 3 dagen). Wijzigingen worden meteen toegepast.
 
 ## Entiteiten
 Per adres wordt één apparaat aangemaakt met:
@@ -39,6 +39,7 @@ Per adres wordt één apparaat aangemaakt met:
 | `sensor.…_dagen_tot_volgende_ophaling` | aantal dagen (0 = vandaag) | |
 | `sensor.…_ophaling_vandaag` | `PMD, Restafval` of `Geen` | `date`, `waste_types`, `has_pickup` |
 | `sensor.…_ophaling_morgen` | idem voor morgen | idem |
+| `sensor.…_ophaling_binnenkort` | `Binnen 3 dagen: GFT, PMD` of `Geen ophaling binnen 3 dagen` (venster instelbaar, standaard 3 = vandaag t.e.m. vandaag + 3) | `days`, `waste_types`, `waste_types_names`, `waste_types_text`, `has_pickup`, `pickups` (lijst met `date`, `days_until`, `waste_type`, `name`) |
 | `sensor.…_restafval`, `…_pmd`, `…_gft`, `…_papier_en_karton`, `…_glas`, `…_grofvuil`, `…_kerstbomen` | volgende datum per afvalsoort | `days_until`, `is_today`, `is_tomorrow`, `upcoming` (volgende 5 data) |
 | `calendar.…_ophaalkalender` | kalender met alle ophalingen (hele-dag events) | |
 

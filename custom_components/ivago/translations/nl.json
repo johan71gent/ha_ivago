@@ -58,6 +58,9 @@
       },
       "tomorrow": {
         "name": "Ophaling morgen"
+      },
+      "upcoming": {
+        "name": "Ophaling binnenkort"
       }
     },
     "calendar": {
@@ -73,11 +76,13 @@
         "description": "Hoe vaak de kalender wordt opgehaald en hoe ver vooruit.",
         "data": {
           "scan_interval_hours": "Updatefrequentie (uren)",
-          "lookahead_days": "Dagen vooruit ophalen"
+          "lookahead_days": "Dagen vooruit ophalen",
+          "upcoming_days": "Venster 'binnenkort' (dagen)"
         },
         "data_description": {
           "scan_interval_hours": "Standaard 12 uur. De kalender verandert zelden; vaker dan enkele keren per dag heeft geen zin.",
-          "lookahead_days": "Standaard 90 dagen. Bepaalt hoe ver de kalender-entiteit en 'upcoming' vooruit kijken."
+          "lookahead_days": "Standaard 90 dagen. Bepaalt hoe ver de kalender-entiteit en 'upcoming' vooruit kijken.",
+          "upcoming_days": "Standaard 3. Bepaalt de sensor 'Ophaling binnenkort': vandaag tot en met vandaag + N dagen."
         }
       }
     }

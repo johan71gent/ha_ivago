@@ -46,6 +46,7 @@ async def async_setup_entry(
         IvagoDaysUntilSensor(coordinator),
         IvagoDaySensor(coordinator, "today", 0),
         IvagoDaySensor(coordinator, "tomorrow", 1),
+        IvagoUpcomingSensor(coordinator),
     ]
 
     known: set[str] = set()
@@ -189,4 +190,63 @@ class IvagoDaySensor(IvagoEntity, SensorEntity):
             "waste_types": [p.waste_type for p in pickups],
             "waste_types_names": _names(pickups),
             "has_pickup": bool(pickups),
+        }
+
+
+class IvagoUpcomingSensor(IvagoEntity, SensorEntity):
+    """Text: which waste types are collected within the next N days.
+
+    State e.g. ``Binnen 3 dagen: GFT, PMD`` or ``Geen ophaling binnen 3 dagen``.
+    N is configurable in the integration options (default 3). "Within N days"
+    means today up to and including today + N.
+    """
+
+    _attr_translation_key = "upcoming"
+    _attr_icon = "mdi:calendar-alert"
+
+    def __init__(self, coordinator: IvagoCoordinator) -> None:
+        """Initialise."""
+        super().__init__(coordinator, "upcoming")
+
+    def _pickups(self) -> list[Pickup]:
+        return self.coordinator.data.pickups_within(self.coordinator.upcoming_days)
+
+    def _unique_types(self) -> list[str]:
+        """Waste types in the window, ordered by first pickup date, no duplicates."""
+        seen: list[str] = []
+        for p in self._pickups():
+            if p.waste_type not in seen:
+                seen.append(p.waste_type)
+        return seen
+
+    @property
+    def native_value(self) -> str:
+        """Human readable summary."""
+        days = self.coordinator.upcoming_days
+        types = self._unique_types()
+        if not types:
+            return f"Geen ophaling binnen {days} dagen"
+        return f"Binnen {days} dagen: " + ", ".join(waste_type_name(t) for t in types)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Extra attributes."""
+        today = self.coordinator.data.today()
+        pickups = self._pickups()
+        types = self._unique_types()
+        return {
+            "days": self.coordinator.upcoming_days,
+            "waste_types": types,
+            "waste_types_names": [waste_type_name(t) for t in types],
+            "waste_types_text": ", ".join(waste_type_name(t) for t in types) or None,
+            "has_pickup": bool(pickups),
+            "pickups": [
+                {
+                    "date": p.date.isoformat(),
+                    "days_until": (p.date - today).days,
+                    "waste_type": p.waste_type,
+                    "name": waste_type_name(p.waste_type),
+                }
+                for p in pickups
+            ],
         }

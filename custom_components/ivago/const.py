@@ -13,8 +13,10 @@ CONF_STREET_QUERY = "street_query"
 # Options
 CONF_SCAN_INTERVAL_HOURS = "scan_interval_hours"
 CONF_LOOKAHEAD_DAYS = "lookahead_days"
+CONF_UPCOMING_DAYS = "upcoming_days"
 DEFAULT_SCAN_INTERVAL_HOURS = 12
 DEFAULT_LOOKAHEAD_DAYS = 90
+DEFAULT_UPCOMING_DAYS = 3
 
 BASE_URL = "https://www.ivago.be"
 URL_PICKUP_PAGE = f"{BASE_URL}/nl/particulier/afval/ophaling"
