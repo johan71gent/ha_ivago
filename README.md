@@ -11,7 +11,7 @@ Geen account of API-key nodig, enkel je straat en huisnummer.
 
 ### Via HACS (custom repository)
 1. HACS → Integraties → ⋮ → *Custom repositories*
-2. URL van deze repo toevoegen, categorie **Integration**
+2. `https://github.com/johan71gent/ha_ivago` toevoegen, categorie **Integration**
 3. "IVAGO Afvalkalender" installeren en Home Assistant herstarten
 
 ### Manueel
