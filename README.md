@@ -2,6 +2,8 @@
 
 # IVAGO Afvalkalender – Home Assistant integratie
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%98%95-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/johan71gent)
+
 Custom integration die de **ophaalkalender van IVAGO** (Gent & Destelbergen) in Home Assistant brengt:
 welk type huisvuil wordt vandaag/morgen/volgende keer opgehaald, en een kalender-entiteit met alle ophalingen.
 
@@ -90,6 +92,11 @@ entities:
 3. Straten opzoeken: `GET https://www.ivago.be/nl/particulier/autocomplete/garbage/streets?q=Kortrijkse`.
 
 Vervalt de sessie, dan wordt het adres automatisch opnieuw ingediend.
+
+## Steun dit project
+Vind je deze integratie handig? Een koffie wordt gewaardeerd en houdt het onderhoud gaande:
+
+<a href="https://buymeacoffee.com/johan71gent"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%98%95-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
 
 ## Disclaimer
 Niet-officiële integratie, niet verbonden met IVAGO. Als IVAGO zijn website wijzigt kan de integratie stoppen met werken.
